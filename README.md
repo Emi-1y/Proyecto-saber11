@@ -1,12 +1,5 @@
 # Pipeline End-to-End de Big Data en AWS: Resultados Pruebas Saber 11 (ICFES)
 
-[![AWS Region](https://img.shields.io/badge/AWS%20Region-us--east--1-orange.svg)](https://aws.amazon.com/)
-[![Storage](https://img.shields.io/badge/Storage-S3%20(Raw%2FTrusted%2FRefined)-blue.svg)](https://aws.amazon.com/s3/)
-[![Processing](https://img.shields.io/badge/Engine-AWS%20Glue%20%7C%20Apache%20Spark-red.svg)](https://aws.amazon.com/glue/)
-[![Catalog](https://img.shields.io/badge/Catalog-Glue%20Data%20Catalog%20%7C%20Hive-yellow.svg)](https://aws.amazon.com/glue/)
-[![Analytics](https://img.shields.io/badge/Analytics-Athena%20%7C%20EMR%20%7C%20PySpark-green.svg)](https://aws.amazon.com/athena/)
-[![App](https://img.shields.io/badge/Frontend-Streamlit%20%2B%20API%20Gateway-FF4B4B.svg)](https://streamlit.io/)
-
 Este proyecto implementa una arquitectura completa de **Data Lakehouse en Amazon Web Services (AWS)** para procesar, limpiar, catalogar, consultar y visualizar los microdatos históricos de los **Resultados de las pruebas de Estado Saber 11 (ICFES)** en Colombia.
 
 ---
