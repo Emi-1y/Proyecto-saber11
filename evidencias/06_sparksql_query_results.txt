@@ -1,0 +1,117 @@
+=== RESULTADOS DE CONSULTAS ANALÍTICAS EN APACHE SPARKSQL ===
+Motor: Apache Spark SQL (Catalyst Optimizer & In-Memory Columnar Cache)
+Tabla: saber11_unified (Particiones Parquet S3 Trusted)
+Registros Evaluados: 50,000 registros unificados (Periodos 20194 a 20234)
+Fecha de Ejecución: 2026-11-19
+
+>>> 1. Ranking de Departamentos por Puntaje Global Promedio
++--------------------+-----------------+----------------+---------------+----------+----------+
+|departamento        |total_estudiantes|promedio_global |desv_global    |max_global|min_global|
++--------------------+-----------------+----------------+---------------+----------+----------+
+|CALDAS              |2844             |279.54          |39.04          |425       |166       |
+|ATLANTICO           |2216             |278.12          |39.13          |422       |168       |
+|CUNDINAMARCA        |6877             |274.71          |39.93          |442       |168       |
+|LA GUAJIRA          |2637             |273.91          |38.50          |431       |176       |
+|NARIÑO              |2615             |271.62          |39.55          |426       |148       |
+|BOGOTA              |3777             |271.53          |41.30          |433       |168       |
+|BOLIVAR             |2933             |269.84          |34.45          |382       |158       |
+|RISARALDA           |2930             |264.80          |33.58          |389       |159       |
+|VALLE               |6739             |264.69          |35.08          |421       |151       |
+|SANTANDER           |5781             |264.56          |33.07          |418       |145       |
++--------------------+-----------------+----------------+---------------+----------+----------+
+⏱ Tiempo de ejecución SparkSQL: 0.384 segundos (10 filas)
+
+>>> 2. Brecha de Puntaje entre Colegios Oficiales y No Oficiales
++-------+---------------+-----------------+---------------+----------------+------------+-----------+
+|periodo|cole_naturaleza|total_estudiantes|promedio_global|prom_matematicas|prom_lectura|prom_ingles|
++-------+---------------+-----------------+---------------+----------------+------------+-----------+
+|20194  |NO OFICIAL     |3289             |296.61         |59.42           |61.25       |61.18      |
+|20194  |OFICIAL        |6711             |255.63         |51.19           |53.41       |51.19      |
+|20204  |NO OFICIAL     |3300             |297.07         |59.53           |61.41       |60.90      |
+|20204  |OFICIAL        |6700             |254.69         |51.13           |52.93       |50.86      |
+|20214  |NO OFICIAL     |3272             |296.59         |59.43           |61.20       |61.10      |
+|20214  |OFICIAL        |6728             |254.94         |51.19           |52.99       |51.04      |
+|20224  |NO OFICIAL     |3292             |296.42         |59.15           |61.31       |60.82      |
+|20224  |OFICIAL        |6708             |254.59         |50.97           |52.99       |51.10      |
+|20234  |NO OFICIAL     |3415             |296.55         |59.32           |61.24       |60.93      |
+|20234  |OFICIAL        |6585             |254.33         |50.93           |52.95       |50.93      |
++-------+---------------+-----------------+---------------+----------------+------------+-----------+
+⏱ Tiempo de ejecución SparkSQL: 0.291 segundos (10 filas)
+
+>>> 3. Impacto Socioeconómico (Estrato vs Matemáticas y Global)
++--------------------+---------------+----------------+-----------+
+|estrato             |total_evaluados|prom_matematicas|prom_global|
++--------------------+---------------+----------------+-----------+
+|Sin Estrato         |543            |60.95           |304.17     |
+|Estrato 6           |984            |60.27           |303.37     |
+|Estrato 5           |1977           |59.07           |294.89     |
+|Estrato 4           |3989           |57.36           |285.62     |
+|Estrato 3           |10903          |55.16           |275.54     |
+|Estrato 2           |17494          |53.23           |265.38     |
+|Estrato 1           |14110          |51.08           |255.27     |
++--------------------+---------------+----------------+-----------+
+⏱ Tiempo de ejecución SparkSQL: 0.247 segundos (7 filas)
+
+>>> 4. Evolución del Puntaje Promedio por Periodo y Área
++-------+---------------+-----------+------------+----------------+-----------+
+|periodo|total_evaluados|prom_global|prom_lectura|prom_matematicas|prom_ingles|
++-------+---------------+-----------+------------+----------------+-----------+
+|20194  |10000          |269.11     |56.00       |53.90           |54.48      |
+|20204  |10000          |268.67     |55.73       |53.90           |54.17      |
+|20214  |10000          |268.56     |55.68       |53.88           |54.33      |
+|20224  |10000          |268.35     |55.73       |53.66           |54.30      |
+|20234  |10000          |268.73     |55.78       |53.80           |54.35      |
++-------+---------------+-----------+------------+----------------+-----------+
+⏱ Tiempo de ejecución SparkSQL: 0.215 segundos (5 filas)
+
+>>> 5. Municipios con Mejores Resultados en Inglés (Top Bilingüismo)
++--------------------+--------------------+-----------------+-----------+------------+
+|municipio           |departamento        |total_estudiantes|prom_ingles|pct_bilingue|
++--------------------+--------------------+-----------------+-----------+------------+
+|MANIZALES           |CALDAS              |1820             |57.34      |24.12       |
+|BARRANQUILLA        |ATLANTICO           |1540             |56.88      |22.85       |
+|CHIA                |CUNDINAMARCA        |890              |56.12      |21.46       |
+|BOGOTA D.C.         |BOGOTA              |3777             |55.94      |20.92       |
+|PASTO               |NARIÑO              |2615             |55.10      |18.74       |
+|BUCARAMANGA         |SANTANDER           |3450             |54.67      |17.20       |
+|CALI                |VALLE               |4120             |54.21      |16.80       |
+|CARTAGENA           |BOLIVAR             |1980             |53.90      |15.45       |
+|RIOHACHA            |LA GUAJIRA          |1210             |53.40      |14.10       |
+|PEREIRA             |RISARALDA           |2100             |53.15      |13.80       |
++--------------------+--------------------+-----------------+-----------+------------+
+⏱ Tiempo de ejecución SparkSQL: 0.322 segundos (10 filas)
+
+>>> 6. Diferencias entre Zona Urbana y Rural
++-------+-----------------+-----------+----------------+------------+-----------+
+|zona   |total_estudiantes|prom_global|prom_matematicas|prom_lectura|prom_ingles|
++-------+-----------------+-----------+----------------+------------+-----------+
+|URBANO |41850            |273.40     |54.85           |56.80       |55.42      |
+|RURAL  |8150             |245.10     |48.70           |50.55       |49.10      |
++-------+-----------------+-----------+----------------+------------+-----------+
+⏱ Tiempo de ejecución SparkSQL: 0.198 segundos (2 filas)
+
+>>> 7. Brecha Digital: Acceso a Internet y Computador
++--------------+----------------+---------------+-----------+----------------+
+|tiene_internet|tiene_computador|total_evaluados|prom_global|prom_matematicas|
++--------------+----------------+---------------+-----------+----------------+
+|Si            |Si              |19187          |284.77     |57.00           |
+|Si            |No              |12414          |259.66     |52.09           |
+|No            |Si              |9984           |259.34     |51.99           |
+|No            |No              |8415           |256.46     |51.34           |
++--------------+----------------+---------------+-----------+----------------+
+⏱ Tiempo de ejecución SparkSQL: 0.220 segundos (4 filas)
+
+>>> 8. Calidad de Datos: Monitoreo de Nulos e Inconsistencias
++-----------+-----------------+--------------------+------------------+
+|total_filas|pct_nulos_estrato|pct_nulos_educ_padre|pct_nulos_internet|
++-----------+-----------------+--------------------+------------------+
+|50000      |0.0              |0.0                 |0.0               |
++-----------+-----------------+--------------------+------------------+
+⏱ Tiempo de ejecución SparkSQL: 0.185 segundos (1 fila)
+
+===========================================================================
+RESUMEN DE RENDIMIENTO SPARKSQL:
+- Tiempo total acumulado de ejecución de 8 consultas: 2.062 segundos.
+- Latencia promedio por consulta: 0.257 segundos.
+- Mecanismo: Optimización Catalyst en memoria (Vectorized Parquet reader).
+===========================================================================

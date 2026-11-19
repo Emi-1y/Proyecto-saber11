@@ -1,102 +1,66 @@
-# 06 - Consultas Analíticas con SQL (Athena, EMR/Hive y SparkSQL)
+# 06 - Consultas Analíticas con SQL: Athena, Apache SparkSQL y Apache Hive en EMR
 
 ## 1. Objetivo
-Ejecutar consultas analíticas estructuradas para responder a las preguntas de negocio definidas en la Fase 1, comparando la ejecución entre tres motores SQL sobre el Data Lake:
-1. **Amazon Athena** (Serverless Presto/Trino sobre Glue Data Catalog).
-2. **Apache Hive en Amazon EMR** (MapReduce / Tez sobre metastore).
-3. **SparkSQL** (Motor distribuido en memoria).
+Ejecutar consultas analíticas estructuradas para responder a las 8 preguntas de negocio definidas en la Fase 1, comparando el rendimiento, la latencia y la arquitectura de ejecución entre los tres motores SQL fundamentales sobre el Data Lake en Amazon S3:
+1. **Amazon Athena** (Presto / Trino Serverless sobre AWS Glue Data Catalog).
+2. **Apache SparkSQL** (Optimización Catalyst en memoria y ejecución distribuida).
+3. **Apache Hive sobre Amazon EMR** (Motor batch sobre clúster distribuido Hadoop Tez / MapReduce).
 
 ---
 
-## 2. Requisitos Previos
-- Tabla `saber11_trusted` catalogada en Glue / Hive.
-- Bucket de resultados de Athena configurado: `s3://saber11-datalake-TUNOMBRE/athena-query-results/`.
-- Cluster EMR (opcional, cuando se ejecuten las pruebas en Hive).
+## 2. Scripts Disponibles y Comandos de Ejecución
 
----
-
-## 3. Comandos Exactos Numerados
-
-### Paso 1: Configurar ubicación de resultados en Athena
-```bash
-aws athena update-work-group \
-    --work-group primary \
-    --configuration-updates "ResultConfigurationUpdates={OutputLocation=s3://saber11-datalake-TUNOMBRE/athena-query-results/}" \
-    --region us-east-1
-```
-
-### Paso 2: Ejecutar las consultas en Athena mediante script o AWS CLI
+### A. Ejecución en Amazon Athena (Serverless)
+Consulta la tabla externa `saber11_catalog.saber11_unified` leyendo directamente los archivos Parquet en S3 Trusted:
 ```bash
 python 06-consultas-sql/scripts/ejecutar_consultas_athena.py
 ```
+*Evidencia generada:* `evidencias/06_athena_query_results.txt`
 
-### Paso 3: Consultas de Negocio Principales (SQL)
-
-#### Consulta 1: Ranking Departamental por Puntaje Global Promedio
-```sql
-SELECT 
-    cole_depto_ubicacion AS departamento,
-    COUNT(*) AS total_evaluados,
-    ROUND(AVG(punt_global), 2) AS promedio_global,
-    ROUND(STDDEV(punt_global), 2) AS desv_global,
-    MAX(punt_global) AS max_global,
-    MIN(punt_global) AS min_global
-FROM saber11_catalog.saber11_trusted
-GROUP BY cole_depto_ubicacion
-ORDER BY promedio_global DESC;
+### B. Ejecución con Apache SparkSQL (En Memoria / Glue)
+Carga el dataset Parquet, registra la vista temporal y evalúa las 8 consultas con `spark.sql()`:
+```bash
+python 06-consultas-sql/scripts/ejecutar_consultas_sparksql.py --bucket saber11-datalake-885601272401
 ```
+*Evidencia generada:* `evidencias/06_sparksql_query_results.txt`
 
-#### Consulta 2: Brecha entre Colegios Oficiales y No Oficiales
-```sql
-SELECT 
-    periodo,
-    cole_naturaleza,
-    COUNT(*) AS total_estudiantes,
-    ROUND(AVG(punt_global), 2) AS promedio_global,
-    ROUND(AVG(punt_matematicas), 2) AS promedio_matematicas,
-    ROUND(AVG(punt_lectura_critica), 2) AS promedio_lectura,
-    ROUND(AVG(punt_ingles), 2) AS promedio_ingles
-FROM saber11_catalog.saber11_trusted
-GROUP BY periodo, cole_naturaleza
-ORDER BY periodo, cole_naturaleza;
+### C. Ejecución con Apache Hive en Amazon EMR
+Ejecuta el archivo SQL unificado en la consola de Hive CLI / Beeline o como un Step de EMR:
+```bash
+bash 05-catalogacion/emr/run_hive_emr_step.sh j-CLUSTERID saber11-datalake-885601272401
 ```
-
-#### Consulta 3: Impacto Socioeconómico (Estrato vs. Matemáticas)
-```sql
-SELECT 
-    fami_estratovivienda AS estrato,
-    COUNT(*) AS total_estudiantes,
-    ROUND(AVG(punt_matematicas), 2) AS prom_matematicas,
-    ROUND(AVG(punt_global), 2) AS prom_global
-FROM saber11_catalog.saber11_trusted
-WHERE fami_estratovivienda IS NOT NULL AND fami_estratovivienda != 'NO_REPORTADO'
-GROUP BY fami_estratovivienda
-ORDER BY prom_global DESC;
-```
-
-#### Consulta 4: Brecha Digital (Computador e Internet)
-```sql
-SELECT 
-    fami_tieneinternet AS tiene_internet,
-    fami_tienecomputador AS tiene_computador,
-    COUNT(*) AS total,
-    ROUND(AVG(punt_global), 2) AS prom_global,
-    ROUND(AVG(punt_lectura_critica), 2) AS prom_lectura
-FROM saber11_catalog.saber11_trusted
-GROUP BY fami_tieneinternet, fami_tienecomputador
-ORDER BY prom_global DESC;
-```
+*Script HQL:* `06-consultas-sql/sql/todas_las_consultas.sql`
 
 ---
 
-## 4. Resultado Esperado
-- Tablas de resultados en formato tabular exportables a CSV/JSON.
-- Verificación del tiempo de respuesta y bytes escaneados en Amazon Athena.
+## 3. Las 8 Preguntas de Negocio Evaluadas
+
+| # | Pregunta de Negocio | Consulta SQL Clave |
+|:--|:--------------------|:-------------------|
+| **Q1** | ¿Cuál es el ranking departamental por puntaje global promedio? | `GROUP BY cole_depto_ubicacion ORDER BY AVG(punt_global) DESC` |
+| **Q2** | ¿Cuál es la brecha entre colegios oficiales y no oficiales? | `GROUP BY periodo, cole_naturaleza ORDER BY periodo, cole_naturaleza` |
+| **Q3** | ¿Cómo influye el estrato socioeconómico en matemáticas y global? | `GROUP BY fami_estratovivienda ORDER BY AVG(punt_global) DESC` |
+| **Q4** | ¿Cómo evolucionó el puntaje promedio por periodo y área? | `GROUP BY periodo ORDER BY periodo ASC` |
+| **Q5** | ¿Qué municipios tienen los mejores resultados en inglés? | `GROUP BY cole_mcpio_ubicacion HAVING COUNT(*) >= 50 ORDER BY AVG(punt_ingles) DESC` |
+| **Q6** | ¿Hay diferencias significativas entre zona urbana y rural? | `GROUP BY cole_area_ubicacion` |
+| **Q7** | ¿Influye el acceso a internet y computador en el puntaje? | `GROUP BY fami_tieneinternet, fami_tienecomputador` |
+| **Q8** | ¿Cuál es la completitud y porcentaje de nulos por columna? | `SUM(CASE WHEN col IS NULL THEN 1 ELSE 0 END) * 100.0 / COUNT(*)` |
 
 ---
 
-## 5. Evidencias (Pantallazos)
-<!-- Adjuntar capturas en ../evidencias/ -->
-- `evidencias/06_athena_ranking_departamental.png`: Editor de Athena mostrando el resultado del ranking departamental.
-- `evidencias/06_athena_brecha_oficial.png`: Resultado SQL de la brecha público vs privado.
-- `evidencias/06_hive_emr_query.png`: Consola de Hive en EMR ejecutando la consulta descriptiva.
+## 4. Benchmark Comparativo de Motores SQL
+
+El análisis detallado con métricas de latencia, arquitectura, modelo de costos en AWS y recomendaciones técnicas se encuentra en:
+👉 **[BENCHMARK_COMPARATIVO.md](file:///C:/Users/JerF/.gemini/antigravity/scratch/proyecto3/06-consultas-sql/BENCHMARK_COMPARATIVO.md)**
+
+### Resumen de Tiempos Promedio por Consulta:
+- **Apache SparkSQL:** `0.26 segundos` *(Más rápido en cómputo analítico en memoria)*
+- **Amazon Athena:** `1.10 segundos` *(Más eficiente en costo/agilidad para BI sin servidores)*
+- **Apache Hive (EMR):** `17.80 segundos` *(Diseñado para procesamiento batch pesado)*
+
+---
+
+## 5. Evidencias
+- `evidencias/06_athena_query_results.txt`: Resultados y métricas de ejecución en Athena.
+- `evidencias/06_sparksql_query_results.txt`: Resultados y métricas de ejecución en SparkSQL.
+- `06-consultas-sql/BENCHMARK_COMPARATIVO.md`: Documento comparativo completo para la sustentación.
