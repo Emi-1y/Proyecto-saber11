@@ -49,7 +49,7 @@ class NumberedCanvas(canvas.Canvas):
         # Footer
         page_text = f"Página {self._pageNumber} de {page_count}"
         self.drawRightString(558, 36, page_text)
-        self.drawString(54, 36, "Sistemas Distribuidos · AWS Academy Learner Lab · Repositorio: Emi-1y/Proyecto-saber11")
+        self.drawString(54, 36, "Sistemas Distribuidos · Emily Cardona & Mateo Villada Higuita · Repositorio: Emi-1y/Proyecto-saber11")
         self.setStrokeColor(colors.HexColor("#CBD5E1"))
         self.setLineWidth(0.5)
         self.line(54, 48, 558, 48)
@@ -175,7 +175,7 @@ def construir_pdf(output_path="evidencias/Informe_Ejecutivo_Saber11_AWS.pdf"):
     # Metadatos del Proyecto
     meta_data = [
         [Paragraph("<b>Materia:</b> Sistemas Distribuidos", table_cell), Paragraph("<b>Región AWS:</b> us-east-1 (N. Virginia)", table_cell)],
-        [Paragraph("<b>Integrantes:</b> Emily Cardona", table_cell), Paragraph("<b>Repositorio GitHub:</b> <font color='#2563EB'><u>github.com/Emi-1y/Proyecto-saber11</u></font>", table_cell)],
+        [Paragraph("<b>Integrantes:</b> Emily Cardona · Mateo Villada Higuita", table_cell), Paragraph("<b>Repositorio GitHub:</b> <font color='#2563EB'><u>github.com/Emi-1y/Proyecto-saber11</u></font>", table_cell)],
         [Paragraph("<b>Dataset Principal:</b> Saber 11 ICFES (ID: kgxf-xxbe)", table_cell), Paragraph("<b>Dataset Geográfico:</b> DANE DIVIPOLA (ID: gdxc-w37w)", table_cell)],
         [Paragraph("<b>Entorno de Ejecución:</b> AWS Academy Learner Lab", table_cell), Paragraph("<b>Rol IAM Utilizado:</b> LabRole / LabInstanceProfile", table_cell)]
     ]
