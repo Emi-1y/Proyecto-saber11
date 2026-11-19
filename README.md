@@ -61,7 +61,7 @@ El repositorio se divide en módulos correspondientes a cada uno de los 8 requer
 
 ### Paso 1: Clonar y configurar el entorno
 ```bash
-git clone https://github.com/TU_USUARIO/proyecto3-saber11-aws.git
+git clone https://github.com/Emi-1y/Proyecto-saber11.git
 cd proyecto3-saber11-aws
 
 # Crear entorno virtual de Python
