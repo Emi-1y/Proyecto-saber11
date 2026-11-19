@@ -18,6 +18,7 @@ aws_credentials.csv
 *.csv
 *.parquet
 *.json.gz
+02-fuentes-datos/data/api/saber11_2023.json
 /data/
 /downloads/
 /scratch/
