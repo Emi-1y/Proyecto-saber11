@@ -150,10 +150,30 @@ def cargar_datos():
     if os.path.exists(local_trusted):
         return normalizar_dataset(pd.read_parquet(local_trusted))
     
-    # 3. Fallback local: CSV de muestra
-    csv_sample = os.path.join(base_dir, "02-fuentes-datos", "data", "rds", "resultados_2019_2020.csv")
-    if os.path.exists(csv_sample):
-        return normalizar_dataset(pd.read_csv(csv_sample))
+    # 3. Fallback unificado local (todas las fuentes: RDS 2019-2020, EC2 2021-2022, API 2023)
+    dfs_local = []
+    f_rds = os.path.join(base_dir, "02-fuentes-datos", "data", "rds", "resultados_2019_2020.csv")
+    f_ec2_21 = os.path.join(base_dir, "02-fuentes-datos", "data", "ec2", "saber11_2021.csv")
+    f_ec2_22 = os.path.join(base_dir, "02-fuentes-datos", "data", "ec2", "saber11_2022.csv")
+    f_api_23 = os.path.join(base_dir, "02-fuentes-datos", "data", "api", "saber11_2023.json")
+
+    if os.path.exists(f_rds):
+        dfs_local.append(pd.read_csv(f_rds))
+    if os.path.exists(f_ec2_21):
+        dfs_local.append(pd.read_csv(f_ec2_21))
+    if os.path.exists(f_ec2_22):
+        dfs_local.append(pd.read_csv(f_ec2_22))
+    if os.path.exists(f_api_23):
+        try:
+            import json
+            with open(f_api_23, "r", encoding="utf-8") as f:
+                dfs_local.append(pd.DataFrame(json.load(f)))
+        except Exception:
+            pass
+
+    if dfs_local:
+        df_completo = pd.concat(dfs_local, ignore_index=True)
+        return normalizar_dataset(df_completo)
 
     return pd.DataFrame()
 
