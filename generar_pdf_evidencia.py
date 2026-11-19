@@ -49,7 +49,7 @@ class NumberedCanvas(canvas.Canvas):
         # Footer
         page_text = f"Página {self._pageNumber} de {page_count}"
         self.drawRightString(558, 36, page_text)
-        self.drawString(54, 36, "Proyecto Académico Big Data · AWS Academy Learner Lab · Repositorio: Emi-1y/Proyecto-saber11")
+        self.drawString(54, 36, "Sistemas Distribuidos · AWS Academy Learner Lab · Repositorio: Emi-1y/Proyecto-saber11")
         self.setStrokeColor(colors.HexColor("#CBD5E1"))
         self.setLineWidth(0.5)
         self.line(54, 48, 558, 48)
@@ -170,15 +170,14 @@ def construir_pdf(output_path="evidencias/Informe_Ejecutivo_Saber11_AWS.pdf"):
     # =========================================================================
     story.append(Paragraph("INFORME TÉCNICO DE ARQUITECTURA E IMPLEMENTACIÓN", badge_style))
     story.append(Paragraph("Data Lakehouse en AWS: Pruebas Saber 11 (ICFES)", title_style))
-    story.append(Paragraph("Pipeline de Big Data End-to-End: Ingesta Automática, Glue/Spark ETL, Catalogación, Analítica SQL/PySpark y Web App Serverless", subtitle_style))
-    story.append(HRFlowable(width="100%", thickness=2, color=c_accent, spaceBefore=0, spaceAfter=14))
+    story.append(HRFlowable(width="100%", thickness=2, color=c_accent, spaceBefore=4, spaceAfter=14))
 
     # Metadatos del Proyecto
     meta_data = [
-        [Paragraph("<b>Asignatura:</b> Big Data / Computación en la Nube", table_cell), Paragraph("<b>Región AWS:</b> us-east-1 (N. Virginia)", table_cell)],
+        [Paragraph("<b>Materia:</b> Sistemas Distribuidos", table_cell), Paragraph("<b>Región AWS:</b> us-east-1 (N. Virginia)", table_cell)],
+        [Paragraph("<b>Integrantes:</b> Emily Cardona", table_cell), Paragraph("<b>Repositorio GitHub:</b> <font color='#2563EB'><u>github.com/Emi-1y/Proyecto-saber11</u></font>", table_cell)],
         [Paragraph("<b>Dataset Principal:</b> Saber 11 ICFES (ID: kgxf-xxbe)", table_cell), Paragraph("<b>Dataset Geográfico:</b> DANE DIVIPOLA (ID: gdxc-w37w)", table_cell)],
-        [Paragraph("<b>Entorno de Ejecución:</b> AWS Academy Learner Lab", table_cell), Paragraph("<b>Rol IAM Utilizado:</b> LabRole / LabInstanceProfile", table_cell)],
-        [Paragraph("<b>Repositorio GitHub:</b> <font color='#2563EB'><u>github.com/Emi-1y/Proyecto-saber11</u></font>", table_cell), Paragraph("<b>Fecha de Certificación:</b> Noviembre 2026", table_cell)]
+        [Paragraph("<b>Entorno de Ejecución:</b> AWS Academy Learner Lab", table_cell), Paragraph("<b>Rol IAM Utilizado:</b> LabRole / LabInstanceProfile", table_cell)]
     ]
     t_meta = Table(meta_data, colWidths=[250, 254])
     t_meta.setStyle(TableStyle([
