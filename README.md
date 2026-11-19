@@ -47,7 +47,7 @@ El repositorio se divide en módulos correspondientes a cada uno de los 8 requer
 ## 3. Preguntas de Negocio Abordadas
 
 1. **Ranking Departamental:** ¿Cuál es el ranking de departamentos por puntaje global promedio?
-2. **Brecha Oficial vs. No Oficial:** ¿Cuál es la brecha de puntajes entre colegios públicos y privados?
+2. **Brecha Publico vs. Privado:** ¿Cuál es la brecha de puntajes entre colegios públicos y privados?
 3. **Influencia Socioeconómica:** ¿Cómo se relacionan el estrato y el nivel educativo parental con el desempeño en Matemáticas?
 4. **Evolución Temporal:** ¿Cómo han variado los promedios por área disciplinar a lo largo de los años?
 5. **Municipios Destacados en Inglés:** ¿Cuáles son los municipios con mejores y peores desempeños en inglés y niveles MCER (B1/B+)?
