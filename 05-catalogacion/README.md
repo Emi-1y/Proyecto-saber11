@@ -1,54 +1,72 @@
-# 05 - Catalogación: AWS Glue Data Catalog & Apache Hive
+# 05 - Catalogación: AWS Glue Data Catalog & Apache Hive en Amazon EMR
 
 ## 1. Objetivo
-Registrar los metadatos y esquemas de los datos almacenados en S3 (zona `raw/` y zona `trusted/`) en el **AWS Glue Data Catalog**, así como definir las tablas externas en el metastore de **Apache Hive en Amazon EMR**, permitiendo la interoperabilidad SQL sin mover físicamente los archivos.
+Registrar los esquemas, metadatos y particiones de los datos depositados en S3 (zona `trusted/`) tanto en el **AWS Glue Data Catalog** como en el metastore de **Apache Hive sobre Amazon EMR**. Esto permite consultar los datos mediante SQL desacoplado (Athena, Hive en EMR, SparkSQL) sin mover ni duplicar físicamente los archivos Parquet en el Data Lake.
 
 ---
 
-## 2. Requisitos Previos
-- Datos transformados en `s3://.../trusted/` en formato Parquet.
-- Rol IAM `LabRole` para Glue Crawler.
-- Acceso a Glue Data Catalog y/o cluster EMR en ejecución.
+## 2. Arquitectura de Catalogación
+
+```
+                     ┌──────────────────────────────────────────────┐
+                     │   S3 Trusted Data Lake (Formato Parquet)    │
+                     │  s3://.../trusted/saber11_unified/periodo=*/ │
+                     └──────────────────────┬───────────────────────┘
+                                            │
+                     ┌──────────────────────┴──────────────────────┐
+                     │                                             │
+                     ▼                                             ▼
+       ┌───────────────────────────┐                 ┌───────────────────────────┐
+       │   AWS Glue Data Catalog   │                 │   Apache Hive Metastore   │
+       │    (Servicio Serverless)  │                 │    (Amazon EMR Clúster)   │
+       ├───────────────────────────┤                 ├───────────────────────────┤
+       │ - Crawler automático      │                 │ - Hive DDL (HQL)          │
+       │ - Inferencia de esquema   │                 │ - MSCK REPAIR TABLE       │
+       │ - Consulta vía Athena     │                 │ - Ejecución Tez / MapRed  │
+       └───────────────────────────┘                 └───────────────────────────┘
+```
 
 ---
 
-## 3. Comandos Exactos Numerados
+## 3. Implementación 1: AWS Glue Data Catalog (Serverless Crawler)
 
-### Paso 1: Crear la base de datos en AWS Glue Data Catalog
+### Paso 1: Crear la Base de Datos en el Catálogo
 ```bash
 aws glue create-database \
-    --database-input '{"Name": "saber11_catalog", "Description": "Catálogo de datos pruebas Saber 11 ICFES"}' \
+    --database-input '{"Name": "saber11_catalog", "Description": "Catalogo unificado Saber 11 ICFES"}' \
     --region us-east-1
 ```
 
-### Paso 2: Crear y ejecutar el Glue Crawler para la zona Trusted
+### Paso 2: Crear y Ejecutar el Crawler de la Zona Trusted
 ```bash
 aws glue create-crawler \
     --name saber11-trusted-crawler \
     --role LabRole \
     --database-name saber11_catalog \
-    --targets '{"S3Targets": [{"Path": "s3://saber11-datalake-TUNOMBRE/trusted/saber11_unified/"}]}' \
+    --targets '{"S3Targets": [{"Path": "s3://saber11-datalake-885601272401/trusted/saber11_unified/"}]}' \
     --region us-east-1
 
-# Iniciar el Crawler
 aws glue start-crawler --name saber11-trusted-crawler --region us-east-1
 ```
 
-### Paso 3: Monitorear el Crawler hasta que finalice
-```bash
-aws glue get-crawler --name saber11-trusted-crawler --query 'Crawler.State' --output text --region us-east-1
-```
+---
 
-### Paso 4: DDL manual alternativo en Hive / Athena
-En caso de requerir registro DDL explícito mediante HiveQL o Athena:
+## 4. Implementación 2: Apache Hive sobre Amazon EMR
+
+En el entorno de Big Data corporativo y académico, **Apache Hive** permite definir tablas externas basadas en HDFS o S3.
+
+### Paso 1: El Script HQL (`05-catalogacion/hive/01_create_trusted_table.hql`)
+Define la tabla externa Parquet con partición `periodo` y repara particiones con `MSCK REPAIR TABLE`:
 ```sql
--- Ejecutar en Hive CLI (EMR) o Athena
-CREATE EXTERNAL TABLE IF NOT EXISTS saber11_catalog.saber11_trusted (
+CREATE DATABASE IF NOT EXISTS saber11_catalog
+  LOCATION 's3://saber11-datalake-885601272401/trusted/';
+
+USE saber11_catalog;
+
+CREATE EXTERNAL TABLE IF NOT EXISTS saber11_catalog.saber11_unified (
     estu_consecutivo STRING,
     estu_genero STRING,
-    estu_fechanacimiento DATE,
-    estu_depto_reside STRING,
-    estu_mcpio_reside STRING,
+    estu_fechanacimiento STRING,
     fami_estratovivienda STRING,
     fami_educacionpadre STRING,
     fami_educacionmadre STRING,
@@ -60,8 +78,10 @@ CREATE EXTERNAL TABLE IF NOT EXISTS saber11_catalog.saber11_trusted (
     cole_calendario STRING,
     cole_area_ubicacion STRING,
     cole_jornada STRING,
-    cole_depto_ubicacion STRING,
+    cole_cod_mcpio_ubicacion STRING,
     cole_mcpio_ubicacion STRING,
+    cole_cod_depto_ubicacion STRING,
+    cole_depto_ubicacion STRING,
     punt_lectura_critica INT,
     punt_matematicas INT,
     punt_c_naturales INT,
@@ -73,20 +93,35 @@ CREATE EXTERNAL TABLE IF NOT EXISTS saber11_catalog.saber11_trusted (
 )
 PARTITIONED BY (periodo INT)
 STORED AS PARQUET
-LOCATION 's3://saber11-datalake-TUNOMBRE/trusted/saber11_unified/';
+LOCATION 's3://saber11-datalake-885601272401/trusted/saber11_unified/'
+TBLPROPERTIES ('parquet.compression' = 'SNAPPY');
 
-MSCK REPAIR TABLE saber11_catalog.saber11_trusted;
+MSCK REPAIR TABLE saber11_catalog.saber11_unified;
+```
+
+### Paso 2: Ejecución del Step de Hive en Amazon EMR (`05-catalogacion/emr/run_hive_emr_step.sh`)
+Para clústeres EMR existentes o transitorios, se envía como un **Step** desatendido utilizando `LabRole`:
+```bash
+bash 05-catalogacion/emr/run_hive_emr_step.sh j-CLUSTERID saber11-datalake-885601272401
+```
+
+### Paso 3: Clúster EMR Transitorio Auto-terminable (`05-catalogacion/emr/crear_cluster_emr_transient.sh`)
+Para optimizar el presupuesto en AWS Academy Learner Lab, el script lanza un nodo transitorio que aplica el DDL en Hive, repara los metadatos y se autodestruye al terminar:
+```bash
+bash 05-catalogacion/emr/crear_cluster_emr_transient.sh saber11-datalake-885601272401
 ```
 
 ---
 
-## 4. Resultado Esperado
-- Base de datos `saber11_catalog` visible en AWS Glue Console.
-- Tabla `saber11_unified` o `saber11_trusted` reconocida con todas sus columnas tipificadas y las particiones (`periodo=...`) descubiertas automáticamente.
+## 5. Resultado Esperado y Verificación
+- **Glue Console:** Base de datos `saber11_catalog` con tabla `saber11_unified` y 5 particiones activas (`periodo=20194, 20204, 20214, 20224, 20234`).
+- **Hive / EMR:** Tabla externa `saber11_unified` disponible para consultas en Hive CLI o Beeline apuntando directamente al storage S3.
+- Compatibilidad directa con Athena y SparkSQL a través del metastore compartido.
 
 ---
 
-## 5. Evidencias (Pantallazos)
-<!-- Adjuntar capturas en ../evidencias/ -->
-- `evidencias/05_glue_database_tables.png`: Consola de AWS Glue Data Catalog mostrando las tablas creadas.
-- `evidencias/05_glue_crawler_success.png`: Historial del Crawler completado con las tablas y particiones añadidas.
+## 6. Evidencias
+- `evidencias/05_glue_database_tables.png`: Base de datos y metadatos de tabla en la consola de AWS Glue.
+- `evidencias/05_glue_crawler_success.png`: Historial del Crawler con estado `SUCCEEDED` y particiones añadidas.
+- `05-catalogacion/hive/01_create_trusted_table.hql`: Script DDL HQL completo.
+- `05-catalogacion/emr/run_hive_emr_step.sh`: Automatización del Step de Hive en EMR.
