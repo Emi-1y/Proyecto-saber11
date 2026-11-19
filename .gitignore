@@ -1,0 +1,35 @@
+# Entornos virtuales y Python
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.ipynb_checkpoints
+
+# Credenciales y variables sensibles
+.env
+*.pem
+*.key
+aws_credentials.json
+aws_credentials.csv
+
+# Datos grandes y temporales
+*.csv
+*.parquet
+*.json.gz
+/data/
+/downloads/
+/scratch/
+!02-fuentes-datos/sample_*.csv
+
+# IDE y Sistema Operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs y caches
+*.log
+.pytest_cache/
+.streamlit/secrets.toml
