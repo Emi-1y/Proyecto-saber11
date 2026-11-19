@@ -36,7 +36,7 @@ MUNICIPIOS_BASE = [
     {"cod_depto": "13", "nom_depto": "BOLIVAR", "cod_municipio": "13001", "nom_municipio": "CARTAGENA", "lat": 10.3910, "lon": -75.4794},
     {"cod_depto": "25", "nom_depto": "CUNDINAMARCA", "cod_municipio": "25754", "nom_municipio": "SOACHA", "lat": 4.5804, "lon": -74.2179},
     {"cod_depto": "25", "nom_depto": "CUNDINAMARCA", "cod_municipio": "25175", "nom_municipio": "CHIA", "lat": 4.8608, "lon": -74.0573},
-    {"cod_depto": "52", "nom_depto": "PASTO", "cod_municipio": "52001", "nom_municipio": "PASTO", "lat": 1.2136, "lon": -77.2811},
+    {"cod_depto": "52", "nom_depto": "NARIÑO", "cod_municipio": "52001", "nom_municipio": "PASTO", "lat": 1.2136, "lon": -77.2811},
     {"cod_depto": "17", "nom_depto": "CALDAS", "cod_municipio": "17001", "nom_municipio": "MANIZALES", "lat": 5.0689, "lon": -75.5174},
     {"cod_depto": "66", "nom_depto": "RISARALDA", "cod_municipio": "66001", "nom_municipio": "PEREIRA", "lat": 4.8133, "lon": -75.6961},
     {"cod_depto": "27", "nom_depto": "CHOCO", "cod_municipio": "27001", "nom_municipio": "QUIBDO", "lat": 5.6947, "lon": -76.6611},

@@ -85,3 +85,19 @@ Para simular un entorno corporativo real donde coexisten sistemas transaccionale
 - **App Token y Cuotas:**
   - Sin token: limitado a ráfagas bajas con riesgo de recibir código HTTP `429 Too Many Requests`.
   - Con App Token: hasta miles de llamadas por hora agregando la cabecera `X-App-Token: <TU_APP_TOKEN>` o el parámetro en la URL `?$$app_token=<TU_APP_TOKEN>`.
+
+---
+
+## 5. Aclaración Metodológica: Datos Sintéticos y Precisión Geográfica
+
+### 5.1. Justificación del Muestreo Sintético Controlado
+El dataset histórico completo de Saber 11 en `datos.gov.co` supera los 7.2 millones de filas y múltiples gigabytes. Para efectos de desarrollo, reproducibilidad, rapidez en pruebas de integración continua y cumplimiento estricto con las cuotas de computación del entorno educativo (**AWS Academy Learner Lab**), se generó un **universo controlado y representativo de 50,000 registros**:
+- **Consistencia de Esquema:** Respeta rigurosamente el estándar oficial de 51 columnas del dataset ICFES `kgxf-xxbe` y las tipificaciones del DANE.
+- **Distribución Estadística Realista:** Reproduce correlaciones socioeconómicas conocidas (como la brecha oficial vs. no oficial y estrato socioeconómico vs. puntaje global) mediante distribuciones gaussianas truncadas entre 0 y 100 por componente y 0 a 500 en puntaje global.
+- **Portabilidad Académica:** Permite a cualquier evaluador recrear de extremo a extremo las tres fuentes en pocos minutos sin descargar gigabytes de datos en crudo.
+
+### 5.2. Precisión en la Codificación Geográfica (DANE / DIVIPOLA)
+Se aclara expresamente la jerarquía político-administrativa de Colombia según la codificación DIVIPOLA:
+- El código DANE **`52`** corresponde al **Departamento de NARIÑO**.
+- El código DANE **`52001`** corresponde al Municipio de **PASTO** (su capital).
+En el pipeline unificado se corrigió cualquier etiquetado preliminar que catalogara a Pasto a nivel departamental, garantizando que **Pasto** figure exclusivamente en el nivel de municipio y **Nariño** en el nivel de departamento.
