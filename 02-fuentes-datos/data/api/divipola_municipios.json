@@ -1,0 +1,130 @@
+[
+  {
+    "cod_depto": "11",
+    "nom_depto": "BOGOTA",
+    "cod_municipio": "11001",
+    "nom_municipio": "BOGOTA D.C.",
+    "lat": 4.6097,
+    "lon": -74.0817
+  },
+  {
+    "cod_depto": "05",
+    "nom_depto": "ANTIOQUIA",
+    "cod_municipio": "05001",
+    "nom_municipio": "MEDELLIN",
+    "lat": 6.2442,
+    "lon": -75.5812
+  },
+  {
+    "cod_depto": "05",
+    "nom_depto": "ANTIOQUIA",
+    "cod_municipio": "05088",
+    "nom_municipio": "BELLO",
+    "lat": 6.337,
+    "lon": -75.5579
+  },
+  {
+    "cod_depto": "76",
+    "nom_depto": "VALLE",
+    "cod_municipio": "76001",
+    "nom_municipio": "CALI",
+    "lat": 3.4516,
+    "lon": -76.532
+  },
+  {
+    "cod_depto": "76",
+    "nom_depto": "VALLE",
+    "cod_municipio": "76111",
+    "nom_municipio": "BUGA",
+    "lat": 3.9009,
+    "lon": -76.2978
+  },
+  {
+    "cod_depto": "08",
+    "nom_depto": "ATLANTICO",
+    "cod_municipio": "08001",
+    "nom_municipio": "BARRANQUILLA",
+    "lat": 10.9685,
+    "lon": -74.7813
+  },
+  {
+    "cod_depto": "68",
+    "nom_depto": "SANTANDER",
+    "cod_municipio": "68001",
+    "nom_municipio": "BUCARAMANGA",
+    "lat": 7.1254,
+    "lon": -73.1198
+  },
+  {
+    "cod_depto": "68",
+    "nom_depto": "SANTANDER",
+    "cod_municipio": "68276",
+    "nom_municipio": "FLORIDABLANCA",
+    "lat": 7.0622,
+    "lon": -73.0864
+  },
+  {
+    "cod_depto": "13",
+    "nom_depto": "BOLIVAR",
+    "cod_municipio": "13001",
+    "nom_municipio": "CARTAGENA",
+    "lat": 10.391,
+    "lon": -75.4794
+  },
+  {
+    "cod_depto": "25",
+    "nom_depto": "CUNDINAMARCA",
+    "cod_municipio": "25754",
+    "nom_municipio": "SOACHA",
+    "lat": 4.5804,
+    "lon": -74.2179
+  },
+  {
+    "cod_depto": "25",
+    "nom_depto": "CUNDINAMARCA",
+    "cod_municipio": "25175",
+    "nom_municipio": "CHIA",
+    "lat": 4.8608,
+    "lon": -74.0573
+  },
+  {
+    "cod_depto": "52",
+    "nom_depto": "PASTO",
+    "cod_municipio": "52001",
+    "nom_municipio": "PASTO",
+    "lat": 1.2136,
+    "lon": -77.2811
+  },
+  {
+    "cod_depto": "17",
+    "nom_depto": "CALDAS",
+    "cod_municipio": "17001",
+    "nom_municipio": "MANIZALES",
+    "lat": 5.0689,
+    "lon": -75.5174
+  },
+  {
+    "cod_depto": "66",
+    "nom_depto": "RISARALDA",
+    "cod_municipio": "66001",
+    "nom_municipio": "PEREIRA",
+    "lat": 4.8133,
+    "lon": -75.6961
+  },
+  {
+    "cod_depto": "27",
+    "nom_depto": "CHOCO",
+    "cod_municipio": "27001",
+    "nom_municipio": "QUIBDO",
+    "lat": 5.6947,
+    "lon": -76.6611
+  },
+  {
+    "cod_depto": "44",
+    "nom_depto": "LA GUAJIRA",
+    "cod_municipio": "44001",
+    "nom_municipio": "RIOHACHA",
+    "lat": 11.5444,
+    "lon": -72.9072
+  }
+]
